@@ -1,0 +1,25 @@
+{
+  "name": "days-to-christmas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap tests/*.test.js",
+    "start": "node index.js"
+  },
+  "now": {
+    "alias": "days-to-xmas.isthe.link"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^1.2.4",
+    "koa-cors": "^0.0.16",
+    "moment": "^2.15.2"
+  },
+  "devDependencies": {
+    "mockdate": "^2.0.0",
+    "tap": "^8.0.1"
+  }
+}
