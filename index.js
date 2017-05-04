@@ -36,7 +36,7 @@ if (module.parent) {
 
 function days() {
   const date = new Date();
-  const year = date.getYear() + 1900;
+  const year = date.getFullYear();
   let xmas = moment([year, 11, 25]);
   const today = moment([year, date.getMonth(), date.getDate()]);
   const delta = xmas.diff(today, 'days');
