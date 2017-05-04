@@ -10,13 +10,17 @@ app.use(function *() {
   const res = days();
   const icon = res === 0 ? 'a2162' : 'a1817';
 
+  const start = new Date().getMonth() === 11 ? 25 : 365;
+
+  const unit = res === 1 ? ' day' : ' days';
+
   this.body = {
     frames: [{
       goalData: {
-        start: 365,
+        start,
         current: res,
         end: 0,
-        unit: ' days'
+        unit,
       },
       icon
     }]
