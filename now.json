@@ -1,0 +1,6 @@
+{
+  "alias": "days-to-xmas.isthe.link",
+  "version": 1,
+  "dotenv": ".env",
+  "files": ["index.js", "tz.js", ".env", "days.js"]
+}

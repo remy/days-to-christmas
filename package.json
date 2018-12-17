@@ -1,24 +1,28 @@
 {
   "name": "days-to-christmas",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tap tests/*.test.js",
-    "start": "node index.js"
-  },
-  "now": {
-    "alias": "days-to-xmas.isthe.link"
+    "test": "NODE_ENV=test tap tests/*.test.js",
+    "dev": "micro-dev",
+    "start": "micro"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "koa": "^1.2.4",
-    "koa-cors": "^0.0.16",
-    "moment": "^2.15.2"
+    "date-fns": "^1.29.0",
+    "geo-tz": "^4.0.2",
+    "ipinfo": "^1.3.8",
+    "lru-cache": "^5.1.1",
+    "micro": "^9.3.3",
+    "micro-cors": "^0.1.1",
+    "micro-query": "^0.3.0",
+    "node-fetch": "^2.3.0"
   },
   "devDependencies": {
+    "micro-dev": "^3.0.0",
     "mockdate": "^2.0.0",
     "tap": "^8.0.1"
   }
