@@ -15,6 +15,7 @@ export default async function handler(request, context) {
   const url = new URL(request.url);
 
   let tz = url.searchParams.get('tz');
+  let target = url.searchParams.get('to') || '25';
 
   if (!tz) {
     // get from Netlify geo
@@ -23,7 +24,7 @@ export default async function handler(request, context) {
 
   const zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
 
-  const current = days(zone.offset);
+  const current = days(zone.offset, target);
 
   const icon = current === 0 ? 'a2162' : 'a1817';
 
@@ -53,16 +54,17 @@ export default async function handler(request, context) {
   });
 }
 
-function days(tzOffset) {
+function days(tzOffset, target = '25') {
+  target = target.padStart(2, '0');
   const date = new Date();
   const year = date.getFullYear();
-  const xmas = parse(`${year}-12-25T00:00:00`);
+  const xmas = parse(`${year}-12-${target}T00:00:00`);
 
   const now = new Date().getTime() + ms(tzOffset);
   let delta = differenceInDays(xmas, now);
 
   if (delta < 0) {
-    delta = differenceInDays(parse(`${year + 1}-12-25T00:00:00`), now);
+    delta = differenceInDays(parse(`${year + 1}-12-${target}T00:00:00`), now);
   }
 
   return delta;
