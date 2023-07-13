@@ -1,29 +1,11 @@
 {
   "name": "days-to-christmas",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test tap tests/*.test.js",
-    "dev": "micro-dev",
-    "start": "micro"
+    "dev": "netlify dev"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "date-fns": "^1.29.0",
-    "geo-tz": "^4.0.2",
-    "ipinfo": "^1.3.8",
-    "lru-cache": "^5.1.1",
-    "micro": "^9.3.3",
-    "micro-cors": "^0.1.1",
-    "micro-query": "^0.3.0",
-    "node-fetch": "^2.3.0"
-  },
-  "devDependencies": {
-    "micro-dev": "^3.0.0",
-    "mockdate": "^2.0.0",
-    "tap": "^8.0.1"
-  }
+  "author": "Remy Sharp",
+  "license": "MIT"
 }
