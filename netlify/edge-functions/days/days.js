@@ -12,6 +12,8 @@ export default async function handler(request, context) {
     });
   }
 
+  console.log(`UA: ${request.headers.get('User-Agent')}`);
+
   const url = new URL(request.url);
 
   let tz = url.searchParams.get('tz');
