@@ -23,7 +23,7 @@ export default async function handler(request, context) {
   }
 
   const ua = request.headers.get('User-Agent');
-  const lametric = ua.toLowerCase90.includes("LaMetric");
+  const lametric = ua.toLowerCase90.includes('LaMetric');
 
   console.log(`UA: ${ua}, tz: ${tz}`);
 
@@ -32,10 +32,10 @@ export default async function handler(request, context) {
   try {
     zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
   } catch (e) {
-    console.log(`invalid zone: ${tz}, detected: ${context.geo.timezone}`)
+    console.log(`invalid zone: ${tz}, detected: ${context.geo.timezone}`);
     zone = {
-      offset="+0:00";
-    }
+      offset: '+0:00',
+    };
   }
 
   const current = days(zone.offset, target);
@@ -49,21 +49,23 @@ export default async function handler(request, context) {
 
   const unit = current === 1 ? ' day' : ' days';
 
-  const res = lametric ? {
-    frames: [
-      {
-        goalData: {
-          start,
-          current,
-          end: 0,
-          unit,
-        },
-        icon,
-      },
-    ],
-  } : {
-    days: current,
-  };
+  const res = lametric
+    ? {
+        frames: [
+          {
+            goalData: {
+              start,
+              current,
+              end: 0,
+              unit,
+            },
+            icon,
+          },
+        ],
+      }
+    : {
+        days: current,
+      };
 
   return new Response(JSON.stringify(res), {
     headers: { 'content-type': 'application/json; charset=utf-8' },
