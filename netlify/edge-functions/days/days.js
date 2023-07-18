@@ -23,7 +23,7 @@ export default async function handler(request, context) {
   }
 
   const ua = request.headers.get('User-Agent');
-  const lametric = ua.toLowerCase90.includes('LaMetric');
+  const lametric = ua.toLowerCase().includes('LaMetric');
 
   console.log(`UA: ${ua}, tz: ${tz}`);
 
