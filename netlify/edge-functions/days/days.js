@@ -21,9 +21,22 @@ export default async function handler(request, context) {
     // get from Netlify geo
     tz = context.geo.timezone;
   }
-  console.log(`UA: ${request.headers.get('User-Agent')}, tz: ${tz}`);
 
-  const zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
+  const ua = request.headers.get('User-Agent');
+  const lametric = ua.toLowerCase90.includes("LaMetric");
+
+  console.log(`UA: ${ua}, tz: ${tz}`);
+
+  let zone;
+
+  try {
+    zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
+  } catch (e) {
+    console.log(`invalid zone: ${tz}, detected: ${context.geo.timezone}`)
+    zone = {
+      offset="+0:00";
+    }
+  }
 
   const current = days(zone.offset, target);
 
@@ -36,7 +49,7 @@ export default async function handler(request, context) {
 
   const unit = current === 1 ? ' day' : ' days';
 
-  const res = {
+  const res = lametric ? {
     frames: [
       {
         goalData: {
@@ -48,6 +61,8 @@ export default async function handler(request, context) {
         icon,
       },
     ],
+  } : {
+    days: current,
   };
 
   return new Response(JSON.stringify(res), {
