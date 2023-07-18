@@ -12,8 +12,6 @@ export default async function handler(request, context) {
     });
   }
 
-  console.log(`UA: ${request.headers.get('User-Agent')}`);
-
   const url = new URL(request.url);
 
   let tz = url.searchParams.get('tz');
@@ -23,6 +21,7 @@ export default async function handler(request, context) {
     // get from Netlify geo
     tz = context.geo.timezone;
   }
+  console.log(`UA: ${request.headers.get('User-Agent')}, tz: ${tz}`);
 
   const zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
 
