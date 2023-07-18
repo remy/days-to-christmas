@@ -17,15 +17,13 @@ export default async function handler(request, context) {
   let tz = url.searchParams.get('tz');
   let target = url.searchParams.get('to') || '25';
 
-  let valid = true;
-
   try {
     Temporal.Now.instant().toZonedDateTimeISO(tz);
   } catch (e) {
-    valid = false;
+    tz = false;
   }
 
-  if (!tz || valid === false) {
+  if (!tz) {
     // get from Netlify geo
     tz = context.geo.timezone;
   }
