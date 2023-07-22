@@ -29,7 +29,7 @@ export default async function handler(request, context) {
   }
 
   const ua = request.headers.get('User-Agent') || "";
-  const lametric = ua.toLowerCase().includes('LaMetric');
+  const lametric = true; // ua.toLowerCase().includes('lametric');
 
   let zone;
 
