@@ -28,7 +28,7 @@ export default async function handler(request, context) {
     tz = context.geo.timezone;
   }
 
-  const ua = request.headers.get('User-Agent');
+  const ua = request.headers.get('User-Agent') || "";
   const lametric = ua.toLowerCase().includes('LaMetric');
 
   let zone;
