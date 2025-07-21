@@ -10,7 +10,7 @@ export default async function handler(request, context) {
 
   const frames = [getCountdown(to, name, icon, unit)];
 
-  return new Response(JSON.stringify(frames), {
+  return new Response(JSON.stringify({ frames }), {
     headers: { 'content-type': 'application/json; charset=utf-8' },
   });
 }

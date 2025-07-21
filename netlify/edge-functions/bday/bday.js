@@ -8,7 +8,7 @@ export default async function handler(request, context) {
     getCountdown('04-17', 'S', 'i6460'),
   ].sort((a, b) => (a.goalData.current < b.goalData.current ? -1 : 1));
 
-  return new Response(JSON.stringify(frames), {
+  return new Response(JSON.stringify({ frames }), {
     headers: { 'content-type': 'application/json; charset=utf-8' },
   });
 }
