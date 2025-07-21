@@ -3,3 +3,11 @@
 [[edge_functions]]
 function = "days"
 path = "/"
+
+[[edge_functions]]
+function = "single"
+path = "/single"
+
+[[edge_functions]]
+function = "bday"
+path = "/bday"

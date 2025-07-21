@@ -16,6 +16,10 @@ export default async function handler(request, context) {
 
   let tz = url.searchParams.get('tz');
   let target = url.searchParams.get('to') || '25';
+  let icon = url.searchParams.get('icon') || null;
+
+  // are we counting down or up?
+  const countDown = !target.includes('-');
 
   try {
     Temporal.Now.instant().toZonedDateTimeISO(tz);
@@ -28,7 +32,7 @@ export default async function handler(request, context) {
     tz = context.geo.timezone;
   }
 
-  const ua = request.headers.get('User-Agent') || "";
+  const ua = request.headers.get('User-Agent') || '';
   const lametric = true; // ua.toLowerCase().includes('lametric');
 
   let zone;
@@ -44,14 +48,16 @@ export default async function handler(request, context) {
 
   const current = days(zone.offset, target);
 
-  const icon = current === 0 ? 'a2162' : 'a1817';
+  if (!icon) {
+    icon = current === 0 ? 'a2162' : 'a1817';
+  }
 
   const startOptions = { 11: 25, 10: 55 };
   const m = new Date().getMonth();
 
-  const start = startOptions[m] || 365;
-
+  const start = countDown ? startOptions[m] || 365 : 0;
   const unit = current === 1 ? ' day' : ' days';
+  const end = countDown ? 0 : start;
 
   const res = lametric
     ? {
@@ -60,7 +66,7 @@ export default async function handler(request, context) {
             goalData: {
               start,
               current,
-              end: 0,
+              end,
               unit,
             },
             icon,
@@ -77,16 +83,27 @@ export default async function handler(request, context) {
 }
 
 function days(tzOffset, target = '25') {
+  let month = '12';
+
+  if (target.includes('-')) {
+    [month, target] = target.split('-');
+  }
+
+  console.log(`target: ${target}, month: ${month}, tzOffset: ${tzOffset}`);
+
   target = target.padStart(2, '0');
   const date = new Date();
   const year = date.getFullYear();
-  const xmas = parse(`${year}-12-${target}T00:00:00`);
+  const endDate = parse(`${year}-${month}-${target}T00:00:00`);
 
   const now = new Date().getTime() + ms(tzOffset);
-  let delta = differenceInDays(xmas, now);
+  let delta = differenceInDays(endDate, now);
 
   if (delta < 0) {
-    delta = differenceInDays(parse(`${year + 1}-12-${target}T00:00:00`), now);
+    delta = differenceInDays(
+      parse(`${year + 1}-${month}-${target}T00:00:00`),
+      now
+    );
   }
 
   return delta;
