@@ -1,8 +1,6 @@
-
-
-[[edge_functions]]
-function = "days"
-path = "/"
+# Main days-to-christmas function as On-Demand Builder
+[[functions]]
+  directory = "netlify/functions"
 
 [[edge_functions]]
 function = "single"
