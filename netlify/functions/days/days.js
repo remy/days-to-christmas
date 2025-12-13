@@ -13,7 +13,11 @@ async function handler(event, context) {
     };
   }
 
-  const params = event.queryStringParameters || {};
+  // On-Demand Builders clear queryStringParameters for caching
+  // Parse from rawUrl instead
+  const url = new URL(event.rawUrl || 'http://localhost/');
+  const params = Object.fromEntries(url.searchParams);
+  
   let tz = params.tz;
   let target = params.to || '25';
   let icon = params.icon || null;

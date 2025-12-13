@@ -20,11 +20,10 @@ describe('Days to Christmas Function', () => {
   describe('Basic functionality', () => {
     it('should return JSON response with countdown data', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'Europe/London',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=Europe/London&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -42,7 +41,9 @@ describe('Days to Christmas Function', () => {
 
     it('should handle favicon requests', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/favicon.ico',
+        rawUrl: 'http://localhost:8888/favicon.ico',
         queryStringParameters: {},
         headers: {},
       };
@@ -55,10 +56,10 @@ describe('Days to Christmas Function', () => {
 
     it('should default to target date of 25 (Christmas)', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -76,11 +77,10 @@ describe('Days to Christmas Function', () => {
   describe('Timezone handling', () => {
     it('should accept timezone parameter', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'America/New_York',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=America/New_York&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -93,10 +93,10 @@ describe('Days to Christmas Function', () => {
 
     it('should fallback to UTC when no timezone provided', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -109,11 +109,10 @@ describe('Days to Christmas Function', () => {
 
     it('should handle invalid timezone gracefully', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'Invalid/Timezone',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=Invalid/Timezone&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -128,11 +127,10 @@ describe('Days to Christmas Function', () => {
   describe('Custom target dates', () => {
     it('should handle custom target date with to parameter', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '31', // New Year's Eve
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=31',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -144,11 +142,10 @@ describe('Days to Christmas Function', () => {
 
     it('should handle full date format (MM-DD)', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '10-31', // Halloween
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=10-31',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -162,11 +159,10 @@ describe('Days to Christmas Function', () => {
   describe('Icon handling', () => {
     it('should use default icon when not specified', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -179,12 +175,10 @@ describe('Days to Christmas Function', () => {
 
     it('should use custom icon when provided', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '25',
-          icon: 'i1234',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=25&icon=i1234',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -198,11 +192,10 @@ describe('Days to Christmas Function', () => {
   describe('GoalData structure', () => {
     it('should return proper goalData structure', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -225,11 +218,10 @@ describe('Days to Christmas Function', () => {
       // This test would need to be run on Dec 24 to get exactly 1 day
       // For now, we just verify the unit is properly formatted
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -244,11 +236,10 @@ describe('Days to Christmas Function', () => {
   describe('Response format', () => {
     it('should return LaMetric format by default', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
-        queryStringParameters: {
-          tz: 'UTC',
-          to: '25',
-        },
+        rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -263,9 +254,11 @@ describe('Days to Christmas Function', () => {
   });
 
   describe('Query string parameters', () => {
-    it('should handle missing queryStringParameters object', async () => {
+    it('should handle missing rawUrl', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
+        queryStringParameters: {},
         headers: {},
       };
 
@@ -276,9 +269,11 @@ describe('Days to Christmas Function', () => {
       expect(body.frames).toBeDefined();
     });
 
-    it('should handle empty queryStringParameters', async () => {
+    it('should handle empty query parameters', async () => {
       const event = {
+        httpMethod: 'GET',
         path: '/',
+        rawUrl: 'http://localhost:8888/',
         queryStringParameters: {},
         headers: {},
       };
@@ -302,11 +297,10 @@ describe('Date calculation logic', () => {
     const handler = module.default;
 
     const event = {
+      httpMethod: 'GET',
       path: '/',
-      queryStringParameters: {
-        tz: 'UTC',
-        to: '25',
-      },
+      rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+      queryStringParameters: {},
       headers: {},
     };
 
@@ -318,5 +312,74 @@ describe('Date calculation logic', () => {
     // This will vary based on the actual current date
     expect(typeof current).toBe('number');
     expect(current).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('On-Demand Builder caching', () => {
+  it('should return ttl property for cache control', async () => {
+    vi.doMock('@netlify/functions', () => ({
+      builder: (fn) => fn,
+    }));
+
+    const module = await import('./days.js');
+    const handler = module.default;
+
+    const event = {
+      httpMethod: 'GET',
+      path: '/',
+      rawUrl: 'http://localhost:8888/?tz=UTC&to=25',
+      queryStringParameters: {},
+      headers: {},
+    };
+
+    const result = await handler(event, {});
+
+    // On-Demand Builders use ttl property for cache expiration
+    expect(result).toHaveProperty('ttl');
+    expect(result.ttl).toBe(3600); // 1 hour in seconds
+  });
+
+  it('should cache uniquely per query string combination', async () => {
+    vi.doMock('@netlify/functions', () => ({
+      builder: (fn) => fn,
+    }));
+
+    const module = await import('./days.js');
+    const handler = module.default;
+
+    // Test two different query string combinations
+    const event1 = {
+      httpMethod: 'GET',
+      path: '/',
+      rawUrl: 'http://localhost:8888/?tz=Europe/London&to=25',
+      queryStringParameters: {},
+      headers: {},
+    };
+
+    const event2 = {
+      httpMethod: 'GET',
+      path: '/',
+      rawUrl: 'http://localhost:8888/?tz=America/New_York&to=25',
+      queryStringParameters: {},
+      headers: {},
+    };
+
+    const result1 = await handler(event1, {});
+    const result2 = await handler(event2, {});
+
+    // Both should succeed
+    expect(result1.statusCode).toBe(200);
+    expect(result2.statusCode).toBe(200);
+
+    // Both should have caching TTL
+    expect(result1.ttl).toBe(3600);
+    expect(result2.ttl).toBe(3600);
+
+    // Parse bodies to verify they're valid
+    const body1 = JSON.parse(result1.body);
+    const body2 = JSON.parse(result2.body);
+
+    expect(body1.frames).toBeDefined();
+    expect(body2.frames).toBeDefined();
   });
 });

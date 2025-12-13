@@ -1,5 +1,5 @@
 # Main days-to-christmas function as On-Demand Builder
-[[functions]]
+[functions]
   directory = "netlify/functions"
 
 [[edge_functions]]
