@@ -78,7 +78,10 @@ export default async function handler(request, context) {
       };
 
   return new Response(JSON.stringify(res), {
-    headers: { 'content-type': 'application/json; charset=utf-8' },
+    headers: { 
+      'content-type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=360',
+    },
   });
 }
 
