@@ -308,10 +308,39 @@ describe('Date calculation logic', () => {
     const body = JSON.parse(result.body);
     const current = body.frames[0].goalData.current;
 
-    // For 2025-12-13, there should be 12 days until Christmas
-    // This will vary based on the actual current date
+    // Days until Christmas varies based on current date
+    // Should be a non-negative number between 0-365
     expect(typeof current).toBe('number');
     expect(current).toBeGreaterThanOrEqual(0);
+    expect(current).toBeLessThanOrEqual(365);
+  });
+});
+
+describe('Error handling', () => {
+  it('should handle malformed timezone offset gracefully', async () => {
+    vi.doMock('@netlify/functions', () => ({
+      builder: (fn) => fn,
+    }));
+
+    const module = await import('./days.js');
+    const handler = module.default;
+
+    // Create an event that will result in invalid timezone offset format
+    const event = {
+      httpMethod: 'GET',
+      path: '/',
+      rawUrl: 'http://localhost:8888/?tz=Invalid&to=25',
+      queryStringParameters: {},
+      headers: {},
+    };
+
+    const result = await handler(event, {});
+
+    // Should still return 200 with valid response
+    expect(result.statusCode).toBe(200);
+    const body = JSON.parse(result.body);
+    expect(body.frames).toBeDefined();
+    expect(body.frames[0].goalData).toBeDefined();
   });
 });
 

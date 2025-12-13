@@ -45,7 +45,7 @@ async function handler(event, context) {
   try {
     zone = Temporal.Now.instant().toZonedDateTimeISO(tz);
   } catch (e) {
-    console.log(`invalid zone: ${tz}`);
+    // Invalid timezone, fallback to UTC offset
     zone = {
       offset: '+0:00',
     };
@@ -101,8 +101,6 @@ function days(tzOffset, target = '25') {
     [month, target] = target.split('-');
   }
 
-  console.log(`target: ${target}, month: ${month}, tzOffset: ${tzOffset}`);
-
   target = target.padStart(2, '0');
   const date = new Date();
   const year = date.getFullYear();
@@ -122,7 +120,13 @@ function days(tzOffset, target = '25') {
 }
 
 function ms(tz) {
-  let [, dir, hour, min] = tz.match(/([+-])(\d{2}):(\d{2})/);
+  const match = tz.match(/([+-])(\d{2}):(\d{2})/);
+  if (!match) {
+    // Invalid timezone format, return 0 offset
+    return 0;
+  }
+  
+  let [, dir, hour, min] = match;
   hour = parseInt(hour, 10);
   min = parseInt(min, 10);
   dir = parseInt(`${dir}1`, 10);
