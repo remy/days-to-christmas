@@ -2,13 +2,22 @@
   "name": "days-to-christmas",
   "version": "3.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
-    "dev": "netlify dev --no-open"
+    "dev": "netlify dev --no-open",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "Remy Sharp",
   "license": "MIT",
   "devDependencies": {
-    "netlify-cli": "^22.3.0"
+    "netlify-cli": "^22.3.0",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
+    "@netlify/functions": "^5.1.1",
+    "date-fns": "^4.1.0"
   }
 }
