@@ -1,4 +1,3 @@
-import { builder } from '@netlify/functions';
 import { Temporal } from '@js-temporal/polyfill';
 import { differenceInDays, parseISO } from 'date-fns';
 
@@ -7,10 +6,9 @@ const HOUR = MIN * 60;
 
 async function handler(event, context) {
   if (event.path === '/favicon.ico') {
-    return {
-      statusCode: 204,
-      body: '',
-    };
+    return new Response(null, {
+      status: 204,
+    });
   }
 
   // On-Demand Builders clear queryStringParameters for caching
@@ -82,16 +80,16 @@ async function handler(event, context) {
         days: current,
       };
 
-  return {
-    statusCode: 200,
+  return new Response(JSON.stringify(res), {
+    status: 200,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      // Cache-Control for CDN caching with 1 hour TTL
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      // Netlify-specific header for On-Demand Builder TTL
+      'Netlify-CDN-Cache-Control': 'public, max-age=3600, must-revalidate',
     },
-    body: JSON.stringify(res),
-    // TTL in seconds - cache for 1 hour (3600 seconds) for date-sensitive data
-    // This ensures countdown is updated hourly for accuracy
-    ttl: 3600,
-  };
+  });
 }
 
 function days(tzOffset, target = '25') {
@@ -134,11 +132,12 @@ function ms(tz) {
   return (HOUR * hour + MIN * min) * dir;
 }
 
-// Wrap with builder for On-Demand Builder functionality
-// TTL is set to 1 hour (3600 seconds) for date-sensitive data
-// This ensures cache is refreshed every hour to keep countdown accurate
-export default builder(handler);
+// Export handler directly for Response API
+export default handler;
 
+// Configure as On-Demand Builder with path mapping
 export const config = {
   path: '/',
+  // Mark as builder for CDN caching
+  cache: 'manual',
 };

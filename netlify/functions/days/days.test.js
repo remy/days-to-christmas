@@ -1,24 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Temporal } from '@js-temporal/polyfill';
 
-// Import the handler function - we need to test the unwrapped version
-// Since the default export is wrapped with builder(), we'll need to mock it
+// Import the handler function directly (now returns Response objects)
 describe('Days to Christmas Function', () => {
   let handler;
 
   beforeEach(async () => {
-    // Mock the builder wrapper to get access to the actual handler
-    vi.resetModules();
-    vi.doMock('@netlify/functions', () => ({
-      builder: (fn) => fn,
-    }));
-
     const module = await import('./days.js');
     handler = module.default;
   });
 
   describe('Basic functionality', () => {
-    it('should return JSON response with countdown data', async () => {
+    it('should return Response object with countdown data', async () => {
       const event = {
         httpMethod: 'GET',
         path: '/',
@@ -29,10 +22,11 @@ describe('Days to Christmas Function', () => {
 
       const result = await handler(event, {});
 
-      expect(result.statusCode).toBe(200);
-      expect(result.headers['Content-Type']).toBe('application/json; charset=utf-8');
+      expect(result).toBeInstanceOf(Response);
+      expect(result.status).toBe(200);
+      expect(result.headers.get('Content-Type')).toBe('application/json; charset=utf-8');
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body).toHaveProperty('frames');
       expect(body.frames).toHaveLength(1);
       expect(body.frames[0]).toHaveProperty('goalData');
@@ -50,8 +44,8 @@ describe('Days to Christmas Function', () => {
 
       const result = await handler(event, {});
 
-      expect(result.statusCode).toBe(204);
-      expect(result.body).toBe('');
+      expect(result).toBeInstanceOf(Response);
+      expect(result.status).toBe(204);
     });
 
     it('should default to target date of 25 (Christmas)', async () => {
@@ -64,7 +58,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       // Should have countdown data
       expect(body.frames[0].goalData).toHaveProperty('current');
@@ -85,9 +79,9 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      expect(result.statusCode).toBe(200);
+      expect(result.status).toBe(200);
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body.frames).toBeDefined();
     });
 
@@ -101,9 +95,9 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      expect(result.statusCode).toBe(200);
+      expect(result.status).toBe(200);
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body.frames).toBeDefined();
     });
 
@@ -117,9 +111,9 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      expect(result.statusCode).toBe(200);
+      expect(result.status).toBe(200);
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body.frames).toBeDefined();
     });
   });
@@ -135,7 +129,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       expect(body.frames[0].goalData).toHaveProperty('current');
     });
@@ -150,7 +144,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       expect(body.frames[0].goalData).toHaveProperty('current');
     });
@@ -167,7 +161,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       expect(body.frames[0].icon).toBeDefined();
       expect(['a1817', 'a2162']).toContain(body.frames[0].icon);
@@ -183,7 +177,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       expect(body.frames[0].icon).toBe('i1234');
     });
@@ -200,7 +194,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       const goalData = body.frames[0].goalData;
 
       expect(goalData).toHaveProperty('start');
@@ -226,7 +220,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       const unit = body.frames[0].goalData.unit;
 
       expect(unit).toMatch(/ day(s)?$/);
@@ -244,7 +238,7 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
 
       expect(body).toHaveProperty('frames');
       expect(Array.isArray(body.frames)).toBe(true);
@@ -263,9 +257,9 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      expect(result.statusCode).toBe(200);
+      expect(result.status).toBe(200);
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body.frames).toBeDefined();
     });
 
@@ -279,9 +273,9 @@ describe('Days to Christmas Function', () => {
       };
 
       const result = await handler(event, {});
-      expect(result.statusCode).toBe(200);
+      expect(result.status).toBe(200);
       
-      const body = JSON.parse(result.body);
+      const body = JSON.parse(await result.text());
       expect(body.frames).toBeDefined();
     });
   });
@@ -289,10 +283,6 @@ describe('Days to Christmas Function', () => {
 
 describe('Date calculation logic', () => {
   it('should calculate correct days until Christmas from today', async () => {
-    vi.doMock('@netlify/functions', () => ({
-      builder: (fn) => fn,
-    }));
-
     const module = await import('./days.js');
     const handler = module.default;
 
@@ -305,7 +295,7 @@ describe('Date calculation logic', () => {
     };
 
     const result = await handler(event, {});
-    const body = JSON.parse(result.body);
+    const body = JSON.parse(await result.text());
     const current = body.frames[0].goalData.current;
 
     // Days until Christmas varies based on current date
@@ -318,10 +308,6 @@ describe('Date calculation logic', () => {
 
 describe('Error handling', () => {
   it('should handle malformed timezone offset gracefully', async () => {
-    vi.doMock('@netlify/functions', () => ({
-      builder: (fn) => fn,
-    }));
-
     const module = await import('./days.js');
     const handler = module.default;
 
@@ -337,19 +323,15 @@ describe('Error handling', () => {
     const result = await handler(event, {});
 
     // Should still return 200 with valid response
-    expect(result.statusCode).toBe(200);
-    const body = JSON.parse(result.body);
+    expect(result.status).toBe(200);
+    const body = JSON.parse(await result.text());
     expect(body.frames).toBeDefined();
     expect(body.frames[0].goalData).toBeDefined();
   });
 });
 
-describe('On-Demand Builder caching', () => {
-  it('should return ttl property for cache control', async () => {
-    vi.doMock('@netlify/functions', () => ({
-      builder: (fn) => fn,
-    }));
-
+describe('CDN caching', () => {
+  it('should return cache headers for CDN caching', async () => {
     const module = await import('./days.js');
     const handler = module.default;
 
@@ -363,16 +345,12 @@ describe('On-Demand Builder caching', () => {
 
     const result = await handler(event, {});
 
-    // On-Demand Builders use ttl property for cache expiration
-    expect(result).toHaveProperty('ttl');
-    expect(result.ttl).toBe(3600); // 1 hour in seconds
+    // Should have cache control headers
+    expect(result.headers.get('Cache-Control')).toContain('max-age=3600');
+    expect(result.headers.get('Netlify-CDN-Cache-Control')).toContain('max-age=3600');
   });
 
   it('should cache uniquely per query string combination', async () => {
-    vi.doMock('@netlify/functions', () => ({
-      builder: (fn) => fn,
-    }));
-
     const module = await import('./days.js');
     const handler = module.default;
 
@@ -397,16 +375,16 @@ describe('On-Demand Builder caching', () => {
     const result2 = await handler(event2, {});
 
     // Both should succeed
-    expect(result1.statusCode).toBe(200);
-    expect(result2.statusCode).toBe(200);
+    expect(result1.status).toBe(200);
+    expect(result2.status).toBe(200);
 
-    // Both should have caching TTL
-    expect(result1.ttl).toBe(3600);
-    expect(result2.ttl).toBe(3600);
+    // Both should have caching headers
+    expect(result1.headers.get('Cache-Control')).toContain('max-age=3600');
+    expect(result2.headers.get('Cache-Control')).toContain('max-age=3600');
 
     // Parse bodies to verify they're valid
-    const body1 = JSON.parse(result1.body);
-    const body2 = JSON.parse(result2.body);
+    const body1 = JSON.parse(await result1.text());
+    const body2 = JSON.parse(await result2.text());
 
     expect(body1.frames).toBeDefined();
     expect(body2.frames).toBeDefined();

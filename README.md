@@ -12,9 +12,9 @@ This service provides a countdown API that:
 
 ## Architecture
 
-### On-Demand Builders
+### CDN Caching
 
-This project uses [Netlify On-Demand Builders](https://docs.netlify.com/configure-builds/on-demand-builders/) instead of Edge Functions for better caching performance:
+This project uses Netlify Functions with CDN caching headers instead of Edge Functions for better caching performance:
 
 **Benefits:**
 - **Shared CDN-level cache**: Responses are cached at Netlify's CDN edge nodes
@@ -27,17 +27,20 @@ This project uses [Netlify On-Demand Builders](https://docs.netlify.com/configur
 Request → Edge Function → Response (every request)
 ```
 
-**Optimized Flow (On-Demand Builders):**
+**Optimized Flow (CDN Caching):**
 ```
-First Request:     Request → Function → Response → Cache
-Subsequent Requests: Request → Cache → Response (fast!)
-After TTL expires:  Request → Function → Response → Cache (refresh)
+First Request:     Request → Function → Response → CDN Cache
+Subsequent Requests: Request → CDN Cache → Response (fast!)
+After TTL expires:  Request → Function → Response → CDN Cache (refresh)
 ```
 
 ### Cache Behavior
 
-- **TTL**: 1 hour (3600 seconds)
+- **TTL**: 1 hour (3600 seconds) via `Cache-Control` headers
 - **Cache Key**: Full URL path + query string
+- **Headers Used**: 
+  - `Cache-Control: public, max-age=3600, s-maxage=3600`
+  - `Netlify-CDN-Cache-Control: public, max-age=3600, must-revalidate`
 - **Example**: `/?tz=Europe/London&to=25` and `/?tz=America/New_York&to=25` are cached separately
 
 This means:
@@ -144,18 +147,19 @@ npm run test:watch
 
 ### Test Coverage
 
-The test suite includes 18 comprehensive tests covering:
-- Basic functionality and response format
+The test suite includes 19 comprehensive tests covering:
+- Basic functionality and response format (Response API)
 - Timezone handling (valid, invalid, missing)
 - Custom target dates (day only, MM-DD format)
 - Icon handling (default and custom)
 - GoalData structure validation
 - Query parameter handling
-- On-Demand Builder caching behavior (TTL, cache keys)
+- CDN caching behavior (Cache-Control headers)
+- Error handling
 
 ## Migration from Edge Functions
 
-This project was migrated from Netlify Edge Functions to regular Netlify Functions with On-Demand Builders for better caching performance.
+This project was migrated from Netlify Edge Functions to regular Netlify Functions with CDN caching for better caching performance.
 
 ### Key Changes
 
@@ -165,15 +169,19 @@ This project was migrated from Netlify Edge Functions to regular Netlify Functio
 
 2. **Dependencies**:
    - Changed from ESM CDN imports to npm packages
-   - Added `@netlify/functions` for builder support
    - Uses `@js-temporal/polyfill` and `date-fns` as npm dependencies
 
 3. **Configuration**:
    - Updated `netlify.toml` to use `[functions]` instead of `[[edge_functions]]`
    - Added `type: "module"` to `package.json`
+   - Added `cache: 'manual'` config for CDN caching
 
-4. **Caching**:
-   - Added TTL-based caching (3600 seconds)
+4. **Response Format**:
+   - Returns `Response` objects instead of plain objects
+   - Uses standard Web API Response constructor
+
+5. **Caching**:
+   - Uses `Cache-Control` and `Netlify-CDN-Cache-Control` headers (3600 seconds TTL)
    - Query parameters parsed from `rawUrl` for proper cache key generation
 
 5. **Context Differences**:
