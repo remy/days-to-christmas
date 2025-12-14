@@ -184,7 +184,7 @@ This project was migrated from Netlify Edge Functions to regular Netlify Functio
    - Uses `Cache-Control` and `Netlify-CDN-Cache-Control` headers (3600 seconds TTL)
    - Query parameters parsed from `rawUrl` for proper cache key generation
 
-5. **Context Differences**:
+6. **Context Differences**:
    - Edge Functions had access to `context.geo.timezone`
    - Regular Functions default to UTC when no timezone provided
    - Clients should explicitly pass timezone parameter
